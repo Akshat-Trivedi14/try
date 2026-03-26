@@ -110,7 +110,7 @@ class PortfolioRequest(BaseModel):
     open_to_work: Optional[bool] = False
 
     class Config:
-        extra = "allow"  # VERY IMPORTANT
+        extra = "allow"
 
 
 class PDFRequest(BaseModel):
@@ -120,6 +120,12 @@ class PDFRequest(BaseModel):
 
 
 # ---------------- HELPERS ----------------
+def trim_text(text: str, max_len: int = 200):
+    if not text:
+        return ""
+    return text if len(text) <= max_len else text[:max_len] + "..."
+
+
 def safe_json_parse(raw: str):
     try:
         start = raw.find("{")
@@ -143,6 +149,19 @@ async def generate_portfolio(data: PortfolioRequest):
         if not client:
             raise HTTPException(status_code=500, detail="Groq API not configured")
 
+        # 🔥 SAFE LIMITS (NO STRUCTURE CHANGE)
+        limited_projects = [
+            {
+                "name": p.name,
+                "description": trim_text(p.description, 200),
+                "tech_stack": p.tech_stack[:5]
+            }
+            for p in data.projects[:3]
+        ]
+
+        limited_skills = data.technical_skills[:10]
+        limited_bio = trim_text(data.bio, 300)
+
         prompt = f"""
 Return ONLY valid JSON:
 
@@ -159,15 +178,16 @@ Return ONLY valid JSON:
 
 Name: {data.full_name}
 Title: {data.professional_title}
-Bio: {data.bio}
-Skills: {', '.join(data.technical_skills)}
-Projects: {json.dumps([p.dict() for p in data.projects])}
+Bio: {limited_bio}
+Skills: {', '.join(limited_skills)}
+Projects: {json.dumps(limited_projects)}
 """
 
         response = client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7,
+            max_tokens=800
         )
 
         raw = response.choices[0].message.content
