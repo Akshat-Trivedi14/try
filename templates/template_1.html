@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<style>
+  @page {
+    size: A4;
+    margin: 0;
+    background: #ffffff;
+  }
+  @page cover-p { size: A4; margin: 0; background: #ffffff; }
+  @page inner-p {
+    size: A4;
+    margin: 0;
+    background: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 10pt;
+    color: #111;
+    background: #fff;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page-break { page-break-after: always; }
+
+  /* PAGE STRUCTURE — Strict containment */
+  .cover {
+    page: cover-p;
+    page-break-after: always;
+    width: 21cm;
+    height: 29.7cm;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* top nav bar */
+  .cover-nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 18pt 36pt;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    box-sizing: border-box;
+    background: #fff;
+    z-index: 100;
+  }
+  .cover-nav-name {
+    font-size: 9pt;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #111;
+  }
+  .cover-nav-links {
+    font-size: 8pt;
+    color: #999;
+    display: flex;
+    gap: 28pt;
+    letter-spacing: 0.5px;
+  }
+
+  /* hero */
+  .cover-hero-label {
+    font-size: 8pt;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #bbb;
+    margin-bottom: 14pt;
+    font-weight: 600;
+  }
+
+  .cover-hero-title {
+    font-size: 52pt;
+    font-weight: 700;
+    color: #111;
+    line-height: 1.0;
+    letter-spacing: -1.5px;
+    margin-bottom: 12pt;
+    max-width: 100%;
+  }
+
+  .cover-hero-sub {
+    font-size: 11pt;
+    color: #666;
+    margin-bottom: 36pt;
+    line-height: 1.75;
+    font-weight: 400;
+  }
+
+  /* photo */
+  .cover-photo {
+    width: 180pt;
+    height: 180pt;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2pt solid #e5e5e5;
+    margin-bottom: 24pt;
+    display: block;
+  }
+
+  .cover-photo-placeholder {
+    width: 180pt;
+    height: 180pt;
+    border-radius: 50%;
+    background: #f5f5f5;
+    border: 2pt solid #e5e5e5;
+    margin-bottom: 24pt;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 52pt;
+    color: #ddd;
+    font-weight: 700;
+  }
+
+  /* availability bar */
+  .cover-avail-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 16pt 36pt;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fafafa;
+    border-top: 1px solid #eee;
+    box-sizing: border-box;
+    z-index: 99;
+  }
+
+  .cover-avail-left {
+    display: flex;
+    align-items: center;
+    gap: 14pt;
+  }
+
+  .cover-avail-avatar {
+    width: 40pt;
+    height: 40pt;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1.5pt solid #ddd;
+    flex-shrink: 0;
+  }
+
+  .cover-avail-text {
+    font-size: 9pt;
+    color: #333;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .cover-avail-sub {
+    font-size: 8pt;
+    color: #888;
+    margin-top: 2pt;
+  }
+
+  .cover-hire-btn {
+    background: #111;
+    color: #fff;
+    font-size: 8.5pt;
+    font-weight: 700;
+    padding: 8pt 20pt;
+    border-radius: 0px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .cover-contact-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 40pt;
+    margin-bottom: 28pt;
+    font-size: 9.5pt;
+    color: #555;
+  }
+
+  .cover-contact-item-label {
+    font-size: 7pt;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #aaa;
+    display: block;
+    margin-bottom: 4pt;
+    font-weight: 700;
+  }
+
+  .cover-contact-item {
+    text-align: center;
+    min-width: 80pt;
+  }
+
+  /* INNER PAGE STRUCTURE — Strict boundaries */
+  .inner {
+    page: inner-p;
+    page-break-before: always;
+    width: 21cm;
+    height: 29.7cm;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 36pt;
+  }
+
+  .inner-content {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sec-label {
+    font-size: 8pt;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 8pt;
+    font-weight: 700;
+  }
+
+  .sec-title {
+    font-size: 32pt;
+    font-weight: 700;
+    color: #111;
+    letter-spacing: -0.6px;
+    line-height: 1.1;
+    margin-bottom: 14pt;
+  }
+
+  .sec-divider {
+    width: 32pt;
+    height: 2pt;
+    background: #111;
+    margin-bottom: 16pt;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     ABOUT / SUMMARY PAGE
+  ═══════════════════════════════════════════════════ */
+  .about-layout {
+    display: flex;
+    gap: 36pt;
+    align-items: flex-start;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .about-photo-col {
+    flex-shrink: 0;
+    flex: 0 0 110pt;
+  }
+
+  .about-photo {
+    width: 110pt;
+    height: 110pt;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2pt solid #e5e5e5;
+    display: block;
+    margin-bottom: 10pt;
+  }
+
+  .about-name-text {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #111;
+    text-align: center;
+  }
+
+  .about-role-text {
+    font-size: 8pt;
+    color: #888;
+    text-align: center;
+    margin-top: 2pt;
+  }
+
+  .about-main { flex: 1; min-width: 0; }
+
+  .summary-text {
+    font-size: 11pt;
+    color: #444;
+    line-height: 1.8;
+    margin-bottom: 24pt;
+    font-weight: 400;
+  }
+
+  .skills-section-title {
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 10pt;
+    margin-top: 14pt;
+  }
+
+  .skill-chip {
+    display: inline-block;
+    background: #f5f5f5;
+    border: 1px solid #e5e5e5;
+    color: #444;
+    font-size: 9pt;
+    padding: 5pt 13pt;
+    border-radius: 0px;
+    margin: 4pt 6pt 4pt 0;
+    font-weight: 500;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     EXPERIENCE PAGE
+  ═══════════════════════════════════════════════════ */
+  .exp-card {
+    background: #f5f5f5;
+    border-left: 2.5pt solid #111;
+    border-radius: 0px;
+    padding: 14pt 16pt;
+    margin-bottom: 0;
+    page-break-inside: avoid;
+    flex: 0 1 calc(50% - 7pt);
+    min-width: 140pt;
+  }
+
+  .exp-card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4pt;
+    margin-bottom: 8pt;
+  }
+
+  .exp-title {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #111;
+    letter-spacing: -0.3px;
+    line-height: 1.1;
+  }
+
+  .exp-date {
+    font-size: 8pt;
+    color: #888;
+    white-space: normal;
+    font-weight: 600;
+    margin-bottom: 4pt;
+  }
+
+  .exp-company {
+    font-size: 9pt;
+    color: #555;
+    font-weight: 600;
+    margin-bottom: 0;
+  }
+
+  .exp-desc {
+    font-size: 9pt;
+    color: #555;
+    line-height: 1.6;
+  }
+
+  /* PROJECT PAGE — Strict boundaries */
+  .proj-page {
+    page: inner-p;
+    page-break-before: always;
+    width: 21cm;
+    height: 29.7cm;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 36pt;
+  }
+
+  .proj-page-content {
+    flex: 1;
+    min-height: 0;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .proj-counter-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10pt;
+  }
+
+  .proj-counter-label {
+    font-size: 8pt;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #888;
+    font-weight: 700;
+  }
+
+  .proj-tech-inline {
+    font-size: 8.5pt;
+    color: #888;
+    letter-spacing: 0.5px;
+  }
+
+  .proj-title {
+    font-size: 36pt;
+    font-weight: 700;
+    color: #111;
+    letter-spacing: -0.8px;
+    line-height: 1.0;
+    margin-bottom: 12pt;
+  }
+
+  .proj-tagline {
+    font-size: 11pt;
+    color: #666;
+    margin-bottom: 20pt;
+    line-height: 1.7;
+    max-width: 520pt;
+  }
+
+  /* hero image — full width, prominent */
+  .proj-hero-img {
+    width: 100%;
+    height: 240pt;
+    object-fit: cover;
+    border-radius: 0px;
+    display: block;
+    margin-bottom: 18pt;
+    border: 1px solid #eee;
+  }
+
+  .proj-no-img-placeholder {
+    width: 100%;
+    height: 180pt;
+    background: #f5f5f5;
+    border-radius: 0px;
+    border: 1px dashed #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9pt;
+    color: #ccc;
+    margin-bottom: 18pt;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .proj-divider {
+    height: 1px;
+    background: #eee;
+    margin: 16pt 0;
+  }
+
+  /* Two col layout for details */
+  .proj-detail-layout {
+    display: flex;
+    gap: 28pt;
+    align-items: flex-start;
+  }
+
+  .proj-detail-main { flex: 1.2; }
+  .proj-detail-side { flex: 1; min-width: 0; }
+
+  .proj-desc-text {
+    font-size: 10pt;
+    color: #444;
+    line-height: 1.8;
+    margin-bottom: 12pt;
+  }
+
+  .proj-field-label {
+    font-size: 8pt;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #bbb;
+    font-weight: 700;
+    margin-top: 10pt;
+    margin-bottom: 5pt;
+  }
+
+  .proj-field-val {
+    font-size: 10pt;
+    color: #444;
+    line-height: 1.7;
+  }
+
+  .proj-accuracy {
+    font-size: 18pt;
+    font-weight: 700;
+    color: #111;
+    letter-spacing: -0.5px;
+  }
+
+  .proj-tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6pt;
+    margin-top: 4pt;
+  }
+
+  .proj-tech-tag {
+    background: #111;
+    color: #fff;
+    font-size: 8pt;
+    padding: 3pt 10pt;
+    border-radius: 0px;
+    font-weight: 500;
+  }
+
+  /* stat pills like Jonny Czar */
+  .proj-stats-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8pt;
+    margin-top: 14pt;
+  }
+
+  .proj-stat-pill {
+    background: #f5f5f5;
+    border: 1px solid #e5e5e5;
+    border-radius: 0px;
+    padding: 6pt 14pt;
+    font-size: 8.5pt;
+    color: #333;
+    font-weight: 600;
+  }
+
+  .proj-link-row {
+    margin-top: 14pt;
+    font-size: 9pt;
+  }
+
+  .proj-link-btn {
+    display: inline-block;
+    background: #111;
+    color: #fff;
+    padding: 6pt 18pt;
+    border-radius: 0px;
+    font-size: 8.5pt;
+    font-weight: 700;
+    margin-right: 10pt;
+    letter-spacing: 0.3px;
+  }
+
+  .proj-link-btn-outline {
+    display: inline-block;
+    background: #fff;
+    color: #111;
+    border: 1.5pt solid #111;
+    padding: 6pt 16pt;
+    border-radius: 0px;
+    font-size: 8.5pt;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     EDUCATION — Horizontal boxed elements
+  ═══════════════════════════════════════════════════ */
+  .edu-section {
+    margin-top: 24pt;
+  }
+
+  .exp-container,
+  .edu-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14pt;
+    margin-top: 12pt;
+  }
+
+  .edu-card {
+    flex: 0 1 calc(50% - 7pt);
+    background: #f5f5f5;
+    border-left: 2.5pt solid #111;
+    border-radius: 0px;
+    padding: 14pt 16pt;
+    page-break-inside: avoid;
+    min-width: 140pt;
+  }
+
+  .edu-card:last-child {
+    border-bottom: none;
+  }
+
+  .edu-degree {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #111;
+    line-height: 1.1;
+  }
+
+  .edu-school {
+    font-size: 9pt;
+    color: #555;
+    font-weight: 600;
+    margin-top: 3pt;
+    line-height: 1.3;
+  }
+
+  .edu-meta {
+    font-size: 8pt;
+    color: #888;
+    margin-top: 4pt;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     CERTIFICATIONS — 2 per row
+  ═══════════════════════════════════════════════════ */
+  .cert-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .cert-card {
+    flex: 1;
+    min-width: 180pt;
+    background: #f5f5f5;
+    border: none;
+    border-left: 2.5pt solid #111;
+    border-radius: 0px;
+    padding: 16pt 18pt;
+    page-break-inside: avoid;
+  }
+
+  .cert-title {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 6pt;
+  }
+
+  .cert-org {
+    font-size: 10pt;
+    color: #666;
+    font-weight: 600;
+    margin-bottom: 2pt;
+  }
+
+  .cert-date {
+    font-size: 8.5pt;
+    color: #888;
+    margin-bottom: 8pt;
+  }
+
+  .cert-img {
+    width: 100%;
+    height: 120pt;
+    object-fit: cover;
+    border-radius: 0px;
+    border: 1px solid #e5e5e5;
+    display: block;
+    margin-top: 10pt;
+  }
+
+  /* CLOSING PAGE — Strict boundaries */
+  .closing-page {
+    page: inner-p;
+    page-break-before: always;
+    width: 21cm;
+    height: 29.7cm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 36pt;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  .closing-title {
+    font-size: 48pt;
+    font-weight: 700;
+    color: #111;
+    letter-spacing: -1.5px;
+    line-height: 1.0;
+    margin-bottom: 24pt;
+  }
+
+  .closing-subtitle {
+    font-size: 12pt;
+    color: #666;
+    margin-bottom: 36pt;
+    line-height: 1.7;
+    font-weight: 400;
+  }
+
+  .closing-contact {
+    font-size: 10pt;
+    color: #555;
+    line-height: 2;
+  }
+
+  .closing-links {
+    display: flex;
+    justify-content: center;
+    gap: 12pt;
+    margin-top: 22pt;
+    flex-wrap: wrap;
+  }
+
+  .closing-link-pill {
+    background: #f5f5f5;
+    border: 1px solid #e5e5e5;
+    border-radius: 0px;
+    padding: 7pt 16pt;
+    font-size: 9pt;
+    font-weight: 600;
+    color: #333;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .closing-link-pill:hover {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+  }
+
+  .proj-link-btn,
+  .proj-link-btn a {
+    text-decoration: none;
+    color: #fff;
+    display: inline-block;
+  }
+
+  .proj-link-btn a {
+    width: 100%;
+    height: 100%;
+  }
+
+  .proj-link-btn:hover,
+  .proj-link-btn a:hover {
+    background: #333;
+  }
+
+  .proj-link-btn-outline,
+  .proj-link-btn-outline a {
+    text-decoration: none;
+    color: #111;
+    display: inline-block;
+  }
+
+  .proj-link-btn-outline a {
+    width: 100%;
+    height: 100%;
+  }
+
+  .proj-link-btn-outline:hover,
+  .proj-link-btn-outline a:hover {
+    background: #111;
+    color: #fff;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 1 — COVER
+═══════════════════════════════════════════════════════ -->
+<div class="cover page-break">
+
+  <!-- Top nav -->
+  <div class="cover-nav">
+    <div class="cover-nav-name">{{ full_name | upper }}</div>
+    <div class="cover-nav-links">
+      {% if github %}<span>GitHub</span>{% endif %}
+      {% if linkedin %}<span>LinkedIn</span>{% endif %}
+      {% if website %}<span>Portfolio</span>{% endif %}
+      <span>Get in touch</span>
+    </div>
+  </div>
+
+  <!-- Hero Content — centered with top padding for nav -->
+  <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding-top: 80pt;">
+
+    <div class="cover-hero-label">{{ professional_title }}</div>
+
+    {% if photo %}
+    <img src="{{ photo }}" class="cover-photo" />
+    {% endif %}
+
+    <div class="cover-hero-title">
+      {{ full_name }}
+    </div>
+
+    <div style="font-size: 13pt; color: #999; margin-bottom: 32pt; font-weight: 500;">{{ professional_title }}</div>
+
+    {% if tagline %}
+    <div class="cover-hero-sub">{{ tagline }}</div>
+    {% elif summary %}
+    <div class="cover-hero-sub">{{ summary[:180] }}{% if summary|length > 180 %}...{% endif %}</div>
+    {% endif %}
+
+    <!-- Contact grid -->
+    <div class="cover-contact-row">
+      <div class="cover-contact-item">
+        <span class="cover-contact-item-label">Email</span>
+        {{ email }}
+      </div>
+      {% if location %}
+      <div class="cover-contact-item">
+        <span class="cover-contact-item-label">Location</span>
+        {{ location }}
+      </div>
+      {% endif %}
+      {% if availability %}
+      <div class="cover-contact-item">
+        <span class="cover-contact-item-label">Availability</span>
+        {{ availability }}
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <!-- Bottom availability bar -->
+  <div class="cover-avail-bar">
+    <div class="cover-avail-left">
+      {% if photo %}
+      <img src="{{ photo }}" class="cover-avail-avatar" />
+      {% endif %}
+      <div>
+        <div class="cover-avail-text">
+          {% if open_to_work %}{{ full_name }} is available for hire{% else %}{{ full_name }}{% endif %}
+        </div>
+        {% if availability %}
+        <div class="cover-avail-sub">Availability: {{ availability }}</div>
+        {% endif %}
+      </div>
+    </div>
+    {% if open_to_work %}
+    <div class="cover-hire-btn">Hire {{ full_name.split(' ')[0] }} →</div>
+    {% endif %}
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 2 — ABOUT ME + SKILLS
+═══════════════════════════════════════════════════════ -->
+<div class="inner page-break">
+
+  <div class="sec-label">Introduction</div>
+  <div class="sec-title">About Me</div>
+  <div class="sec-divider"></div>
+
+  <div class="about-layout">
+
+    {% if photo %}
+    <div class="about-photo-col">
+      <img src="{{ photo }}" class="about-photo" />
+      <div class="about-name-text">{{ full_name }}</div>
+      <div class="about-role-text">{{ professional_title }}</div>
+    </div>
+    {% endif %}
+
+    <div class="about-main">
+      {% if summary %}
+      <div class="summary-text">{{ summary }}</div>
+      {% endif %}
+
+      <div class="skills-section-title">Technical Skills</div>
+      {% for skill in technical_skills %}<span class="skill-chip">{{ skill }}</span>{% endfor %}
+
+      {% if soft_skills %}
+      <div class="skills-section-title">Soft Skills</div>
+      {% for s in soft_skills %}<span class="skill-chip" style="background:#fff8f0;border-color:#ffe0b0;color:#7a4000;">{{ s }}</span>{% endfor %}
+      {% endif %}
+
+      {% if spoken_languages %}
+      <div class="skills-section-title">Languages</div>
+      {% for lang in spoken_languages %}<span class="skill-chip" style="background:#f0fff4;border-color:#b0e8c0;color:#145a24;">{{ lang }}</span>{% endfor %}
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     PAGE 3 — EXPERIENCE (all jobs on one page)
+═══════════════════════════════════════════════════════ -->
+<!-- EDUCATION + WORK EXPERIENCE on same page -->
+{% if work_experience or education %}
+<div class="inner page-break">
+
+  <!-- Education First -->
+  {% if education %}
+  <div class="edu-section">
+    <div class="sec-label">Background</div>
+    <div class="sec-title">Education</div>
+    <div class="sec-divider"></div>
+    <div class="edu-container">
+      {% for edu in education %}
+      <div class="edu-card">
+        <div class="edu-degree">{{ edu.degree }}</div>
+        <div class="edu-school">{{ edu.institution }}</div>
+        <div class="edu-meta">{{ edu.start_year }} – {{ edu.end_year }}{% if edu.grade %} &nbsp;·&nbsp; {{ edu.grade }}{% endif %}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Work Experience Second -->
+  {% if work_experience %}
+  <div class="exp-section" style="margin-top: 24pt;">
+    <div class="sec-label">Career</div>
+    <div class="sec-title">Work Experience</div>
+    <div class="sec-divider"></div>
+
+    {% set we_list = work_experience %}
+    {% if ai_content and ai_content.work_experience %}{% set we_list = ai_content.work_experience %}{% endif %}
+
+    <div class="exp-container">
+      {% for job in we_list %}
+      <div class="exp-card">
+        <div class="exp-card-header">
+          <div class="exp-title">{{ job.job_title }}</div>
+          <div class="exp-company">{{ job.company }}{% if job.location %} · {{ job.location }}{% endif %}</div>
+          <div class="exp-date">{{ job.start_date }} – {{ job.end_date }}</div>
+        </div>
+        <div class="exp-desc">
+          {% set desc = job.enhanced_description if job.enhanced_description is defined else job.description %}
+          {{ desc[:120] }}{% if desc|length > 120 %}...{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endif %}
+
+<!-- ═══════════════════════════════════════════════════════
+     ONE PAGE PER PROJECT — Jonny Czar case study style
+═══════════════════════════════════════════════════════ -->
+{% set proj_list = projects %}
+{% if ai_content and ai_content.projects %}{% set proj_list = ai_content.projects %}{% endif %}
+
+{% for proj in proj_list %}
+<div class="proj-page page-break">
+
+  <!-- Counter row -->
+  <div class="proj-counter-row">
+    <div class="proj-counter-label">Project {{ loop.index }} / {{ proj_list | length }}</div>
+    <div class="proj-tech-inline">
+      {% for t in proj.tech_stack %}{{ t }}{% if not loop.last %} &nbsp;·&nbsp; {% endif %}{% endfor %}
+    </div>
+  </div>
+
+  <!-- Title -->
+  <div class="proj-title">{{ proj.name }}</div>
+
+
+  <!-- Hero image -->
+  {% if proj.images and proj.images | length > 0 %}
+  <img src="{{ proj.images[0] }}" class="proj-hero-img" />
+  {% else %}
+  <div class="proj-no-img-placeholder">No screenshot uploaded</div>
+  {% endif %}
+
+  <div class="proj-divider"></div>
+
+  <!-- Two col details -->
+  <div class="proj-detail-layout">
+
+    <div class="proj-detail-main">
+      <div class="proj-desc-text">
+        {% if proj.enhanced_description is defined and proj.enhanced_description %}{{ proj.enhanced_description }}{% else %}{{ proj.description }}{% endif %}
+      </div>
+
+      {% if proj.problem_statement %}
+      <div class="proj-field-label">Problem Statement</div>
+      <div class="proj-field-val">{{ proj.problem_statement }}</div>
+      {% endif %}
+
+      {% if proj.results %}
+      <div class="proj-field-label">Results &amp; Insights</div>
+      <div class="proj-field-val">{{ proj.results }}</div>
+      {% endif %}
+
+      {% if proj.additional_notes %}
+      <div class="proj-field-label">Additional Notes</div>
+      <div class="proj-field-val">{{ proj.additional_notes }}</div>
+      {% endif %}
+
+      <!-- Links -->
+      {% if proj.github_url or proj.live_url %}
+      <div class="proj-link-row" style="margin-top:20px;">
+        {% if proj.live_url %}<a href="{{ proj.live_url }}" target="_blank" class="proj-link-btn">View Live →</a>{% endif %}
+        {% if proj.github_url %}<a href="{{ proj.github_url }}" target="_blank" class="proj-link-btn-outline">GitHub ↗</a>{% endif %}
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="proj-detail-side">
+
+      <div class="proj-field-label">Tools &amp; Technologies</div>
+      <div class="proj-tech-tags">
+        {% for t in proj.tech_stack %}<span class="proj-tech-tag">{{ t }}</span>{% endfor %}
+      </div>
+
+      {% if proj.dataset %}
+      <div class="proj-field-label">Dataset</div>
+      <div class="proj-field-val">{{ proj.dataset }}</div>
+      {% endif %}
+
+      {% if proj.features %}
+      <div class="proj-field-label">Key Features</div>
+      <div class="proj-field-val">{{ proj.features }}</div>
+      {% endif %}
+
+      {% if proj.model_approach %}
+      <div class="proj-field-label">Model / Approach</div>
+      <div class="proj-field-val">{{ proj.model_approach }}</div>
+      {% endif %}
+
+      {% if proj.accuracy %}
+      <div class="proj-field-label">Accuracy / Score</div>
+      <div class="proj-accuracy">{{ proj.accuracy }}</div>
+      {% endif %}
+
+    </div>
+  </div>
+
+</div>
+{% endfor %}
+
+<!-- ═══════════════════════════════════════════════════════
+     CERTIFICATIONS — 2 per page
+═══════════════════════════════════════════════════════ -->
+{% if achievements %}
+<div class="inner page-break">
+
+  <div class="sec-label">Recognition</div>
+  <div class="sec-title">Certifications</div>
+  <div class="sec-divider"></div>
+
+  <div class="cert-grid">
+    {% for ach in achievements %}
+    <div class="cert-card">
+      <div class="cert-title">{{ ach.title }}</div>
+      <div class="cert-org">{{ ach.organization }}</div>
+      <div class="cert-date">{{ ach.date }}</div>
+      {% if ach.credential_url %}
+      <div style="font-size:8pt;color:#888;margin-top:4px;">{{ ach.credential_url }}</div>
+      {% endif %}
+      {% if ach.image %}
+      <img src="{{ ach.image }}" class="cert-img" />
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endif %}
+
+<!-- ═══════════════════════════════════════════════════════
+     CLOSING PAGE — "Want to get in touch?"
+═══════════════════════════════════════════════════════ -->
+<div class="closing-page">
+
+  <div class="closing-title">
+    Want to get<br/>in touch?
+  </div>
+
+  <div class="closing-subtitle">
+    I'm always open to new opportunities,<br/>collaborations and interesting projects.
+  </div>
+
+  <div class="closing-contact">
+    <div>{{ email }}</div>
+    {% if location %}<div>{{ location }}</div>{% endif %}
+  </div>
+
+  <div class="closing-links">
+    {% if github %}<a href="{{ github }}" target="_blank" class="closing-link-pill">GitHub ↗</a>{% endif %}
+    {% if linkedin %}<a href="{{ linkedin }}" target="_blank" class="closing-link-pill">LinkedIn ↗</a>{% endif %}
+    {% if website %}<a href="{{ website }}" target="_blank" class="closing-link-pill">Portfolio ↗</a>{% endif %}
+    {% if twitter %}<a href="{{ twitter }}" target="_blank" class="closing-link-pill">Twitter ↗</a>{% endif %}
+  </div>
+
+</div>
+
+</body>
+</html>
