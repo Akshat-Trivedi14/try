@@ -118,7 +118,21 @@ def generate_pdf(portfolio_data: dict, template_id: int, orientation: str = 'por
         counter = [0]
         context = process_images(context, tmp_dir, counter)
 
-        html_content = template.render(**context)
+        # 🔥 ONLY FIX ADDED (SAFE CONTEXT)
+        safe_context = {
+            "full_name": context.get("full_name", ""),
+            "professional_title": context.get("professional_title", ""),
+            "bio": context.get("bio", ""),
+            "technical_skills": context.get("technical_skills", []),
+            "projects": context.get("projects", []),
+            "summary": context.get("summary", ""),
+            "tagline": context.get("tagline", ""),
+            "enhanced_bio": context.get("enhanced_bio", ""),
+            "skills_highlight": context.get("skills_highlight", []),
+            **context
+        }
+
+        html_content = template.render(**safe_context)
 
         html_content = inject_orientation(html_content, orientation)
 
