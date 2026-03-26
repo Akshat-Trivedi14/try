@@ -5,8 +5,6 @@ WORKDIR /app
 COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
-
-# 🔥 INSTALL PLAYWRIGHT + CHROMIUM
 RUN playwright install --with-deps chromium
 
 ENV PORT=10000
