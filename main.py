@@ -1,17 +1,19 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse, FileResponse, JSONResponse
-from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
-from typing import Optional, List
 import os
 import json
 import logging
 import traceback
 import sys
 
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse, FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+from typing import Optional, List
+
 from groq import Groq
 from pdf_generator import generate_pdf
+
 
 # ---------------- LOGGING ----------------
 logging.basicConfig(
@@ -21,8 +23,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
 # ---------------- APP ----------------
 app = FastAPI(title="Portfolio Generator API", version="1.0.0")
+
 
 # ---------------- CORS ----------------
 app.add_middleware(
@@ -33,11 +37,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 # ---------------- GROQ ----------------
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 if not GROQ_API_KEY:
-    logger.warning("⚠️ GROQ_API_KEY not set (set in Render dashboard)")
+    logger.warning("⚠️ GROQ_API_KEY not set")
 
 client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
@@ -198,19 +203,18 @@ Projects: {json.dumps(limited_projects)}
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# 🔥 FINAL PDF ENDPOINT (STRICT + SAFE)
+# 🔥 FINAL PDF ENDPOINT (ASYNC FIXED)
 @app.post("/api/download-pdf")
 async def download_pdf(req: PDFRequest):
     try:
-        pdf_bytes = generate_pdf(
+        pdf_bytes = await generate_pdf(
             req.portfolio_data,
             req.template_id,
             req.orientation
         )
 
-        # 🔥 STRICT VALIDATION
         if not pdf_bytes or len(pdf_bytes) < 1000:
-            raise Exception("Generated PDF is invalid or empty")
+            raise Exception("Generated PDF is invalid")
 
         return StreamingResponse(
             iter([pdf_bytes]),
@@ -252,5 +256,4 @@ if __name__ == "__main__":
     import uvicorn
 
     port = int(os.getenv("PORT", 10000))
-
     uvicorn.run(app, host="0.0.0.0", port=port)
