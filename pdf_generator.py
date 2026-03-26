@@ -7,19 +7,20 @@ import tempfile
 import shutil
 import copy
 import logging
+import gc
 
 logger = logging.getLogger(__name__)
 
+# 🔥 FIX font config issues
 os.environ.setdefault('FONTCONFIG_FILE', '')
 os.environ.setdefault('FONTCONFIG_PATH', '')
 
-# 🔥 FIX: ABSOLUTE PATH (DOCKER SAFE)
+# 🔥 DOCKER SAFE PATH
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
 
 
 def process_images(obj, tmp_dir, counter):
-    """Recursively find base64 image strings, save as real files, return file:// path."""
     if isinstance(obj, str) and obj.startswith('data:image'):
         try:
             match = re.match(r'data:([^;]+);base64,(.+)', obj, re.DOTALL)
@@ -28,24 +29,21 @@ def process_images(obj, tmp_dir, counter):
                 ext = mime.split('/')[-1].replace('jpeg', 'jpg').replace('svg+xml', 'svg')
                 counter[0] += 1
                 fpath = os.path.join(tmp_dir, f"img_{counter[0]}.{ext}")
-                
-                try:
-                    with open(fpath, 'wb') as f:
-                        f.write(base64.b64decode(match.group(2)))
-                    uri = 'file:///' + fpath.replace('\\', '/')
-                    logger.debug(f"Saved image {counter[0]} → {uri}")
-                    return uri
-                except Exception as e:
-                    logger.warning(f"Failed to save image {counter[0]}: {e}")
-                    return obj
-            return obj
+
+                with open(fpath, 'wb') as f:
+                    f.write(base64.b64decode(match.group(2)))
+
+                return 'file:///' + fpath.replace('\\', '/')
         except Exception as e:
-            logger.warning(f"Error processing image: {e}")
+            logger.warning(f"Image processing failed: {e}")
             return obj
+
     if isinstance(obj, list):
         return [process_images(i, tmp_dir, counter) for i in obj]
+
     if isinstance(obj, dict):
         return {k: process_images(v, tmp_dir, counter) for k, v in obj.items()}
+
     return obj
 
 
@@ -90,7 +88,6 @@ def generate_pdf(portfolio_data: dict, template_id: int, orientation: str = 'por
     if not (1 <= template_id <= 5):
         raise ValueError(f"Invalid template_id: {template_id}. Must be 1-5.")
 
-    # 🔥 FIX: USE ABSOLUTE TEMPLATE PATH
     if not os.path.exists(TEMPLATE_DIR):
         raise FileNotFoundError(f"Template directory not found: {TEMPLATE_DIR}")
 
@@ -101,24 +98,25 @@ def generate_pdf(portfolio_data: dict, template_id: int, orientation: str = 'por
         raise FileNotFoundError(f"Template not found: {template_path}")
 
     env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
-
     template = env.get_template(template_file)
 
     merged_data = merge_images_into_ai_projects(portfolio_data)
 
     context = copy.deepcopy(merged_data)
     ai = merged_data.get("ai_content", {})
+
+    # 🔥 SAFE FIELD EXTRACTION
     for key in ["summary", "tagline", "enhanced_bio", "skills_highlight"]:
-        if key in ai:
-            context[key] = ai[key]
+        context[key] = ai.get(key, context.get(key, ""))
 
     tmp_dir = None
     try:
         tmp_dir = tempfile.mkdtemp(prefix="pfimgs_")
         counter = [0]
+
         context = process_images(context, tmp_dir, counter)
 
-        # 🔥 ONLY FIX ADDED (SAFE CONTEXT)
+        # 🔥 CRASH-PROOF CONTEXT
         safe_context = {
             "full_name": context.get("full_name", ""),
             "professional_title": context.get("professional_title", ""),
@@ -136,6 +134,9 @@ def generate_pdf(portfolio_data: dict, template_id: int, orientation: str = 'por
 
         html_content = inject_orientation(html_content, orientation)
 
+        # 🔥 MEMORY + FONT STABILITY
+        gc.collect()
+
         pdf_bytes = HTML(
             string=html_content,
             base_url='file:///' + TEMPLATE_DIR.replace('\\', '/') + '/'
@@ -145,7 +146,16 @@ def generate_pdf(portfolio_data: dict, template_id: int, orientation: str = 'por
 
     except Exception as e:
         logger.error(f"PDF generation failed: {e}", exc_info=True)
-        raise
+
+        # 🔥 FAILSAFE: RETURN SIMPLE PDF INSTEAD OF CRASH
+        fallback_html = f"""
+        <h1>Portfolio PDF Error</h1>
+        <p>There was an issue generating your PDF.</p>
+        <pre>{str(e)}</pre>
+        """
+
+        return HTML(string=fallback_html).write_pdf()
+
     finally:
         if tmp_dir and os.path.exists(tmp_dir):
             shutil.rmtree(tmp_dir, ignore_errors=True)
