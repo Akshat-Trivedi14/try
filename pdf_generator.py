@@ -11,9 +11,10 @@ import gc
 
 logger = logging.getLogger(__name__)
 
-# 🔥 FIX font config issues
-os.environ.setdefault('FONTCONFIG_FILE', '')
-os.environ.setdefault('FONTCONFIG_PATH', '')
+# 🔥 FONT FIX (CRITICAL FOR RENDER)
+os.environ.setdefault("FONTCONFIG_PATH", "/etc/fonts")
+os.environ.setdefault("FONTCONFIG_FILE", "")
+os.environ.setdefault("FONTCONFIG_PATH", "")
 
 # 🔥 DOCKER SAFE PATH
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -116,7 +117,7 @@ def generate_pdf(portfolio_data: dict, template_id: int, orientation: str = 'por
 
         context = process_images(context, tmp_dir, counter)
 
-        # 🔥 CRASH-PROOF CONTEXT
+        # 🔥 SAFE CONTEXT (NO JINJA CRASH)
         safe_context = {
             "full_name": context.get("full_name", ""),
             "professional_title": context.get("professional_title", ""),
@@ -131,10 +132,9 @@ def generate_pdf(portfolio_data: dict, template_id: int, orientation: str = 'por
         }
 
         html_content = template.render(**safe_context)
-
         html_content = inject_orientation(html_content, orientation)
 
-        # 🔥 MEMORY + FONT STABILITY
+        # 🔥 STABILITY FIX
         gc.collect()
 
         pdf_bytes = HTML(
@@ -147,10 +147,10 @@ def generate_pdf(portfolio_data: dict, template_id: int, orientation: str = 'por
     except Exception as e:
         logger.error(f"PDF generation failed: {e}", exc_info=True)
 
-        # 🔥 FAILSAFE: RETURN SIMPLE PDF INSTEAD OF CRASH
+        # 🔥 FAILSAFE PDF (NO CRASH)
         fallback_html = f"""
-        <h1>Portfolio PDF Error</h1>
-        <p>There was an issue generating your PDF.</p>
+        <h1>PDF Generation Error</h1>
+        <p>Something went wrong while generating your portfolio.</p>
         <pre>{str(e)}</pre>
         """
 
