@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+<style>
+/* ═══════════════════════════════════════════════
+   DESIGN TOKENS
+   Type scale:  52 / 36 / 22 / 13 / 9pt
+   Spacing:     9 / 18 / 27 / 36 / 54pt
+   Margin:      0.5 in = 36pt on all sides
+   Accent:      #C9A96E  (warm gold)
+   Dark:        #0C0C0E
+   Mid:         #3A3A3A
+   Muted:       #767676
+   Faint:       #B0B0B0
+   Border:      #E4E4E4
+   Surface:     #F7F7F7
+═══════════════════════════════════════════════ */
+
+:root {
+  --gold:    #C9A96E;
+  --gold-lt: rgba(201,169,110,0.18);
+  --dark:    #0C0C0E;
+  --mid:     #3A3A3A;
+  --muted:   #767676;
+  --faint:   #B0B0B0;
+  --border:  #E4E4E4;
+  --surface: #F7F7F7;
+  --white:   #FFFFFF;
+  --margin:  36pt;   /* 0.5 inch */
+  --font-head: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'DM Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* ── Reset ─────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  font-size: 13pt;
+  color: var(--dark);
+  background: #fff;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── A4 page wrapper ───────────────────────── */
+.page-wrap {
+  width: 21cm;
+  margin: 0 auto;
+  background: #fff;
+}
+
+/* ═══════════════════════════════════════════════
+   UNIVERSAL PAGE FOOTER
+═══════════════════════════════════════════════ */
+.page-footer {
+  height: 28pt;
+  padding: 0 var(--margin);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-body);
+  font-size: 8pt;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--faint);
+  flex-shrink: 0;
+}
+
+/* ── Print ────────────────────────────────── */
+@media print {
+  @page { size: A4; margin: 0; }
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .pb { page-break-after: always; }
+  .proj-page { page-break-before: always; page-break-after: always; }
+  .inner { page-break-before: always; }
+  .closing { page-break-before: always; }
+  .exp-entry, .cert-card { page-break-inside: avoid; }
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE 1 — HERO COVER
+═══════════════════════════════════════════════ */
+.cover {
+  width: 21cm;
+  height: 29.7cm;
+  display: flex;
+  flex-direction: column;
+  background: var(--dark);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.cover::before {
+  content: '';
+  position: absolute;
+  top: -160pt;
+  right: -120pt;
+  width: 520pt;
+  height: 520pt;
+  border-radius: 50%;
+  border: 1px solid rgba(201,169,110,0.12);
+  pointer-events: none;
+}
+
+.cover::after {
+  content: '';
+  position: absolute;
+  top: -80pt;
+  right: -40pt;
+  width: 360pt;
+  height: 360pt;
+  border-radius: 50%;
+  border: 1px solid rgba(201,169,110,0.08);
+  pointer-events: none;
+}
+
+.cover-gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 75% 40%, rgba(201,169,110,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 20% 80%, rgba(60,60,100,0.25) 0%, transparent 60%),
+    linear-gradient(140deg, #0C0C0E 0%, #161622 55%, #0C0C0E 100%);
+  pointer-events: none;
+}
+
+.cover-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1px);
+  background-size: 24pt 24pt;
+  pointer-events: none;
+}
+
+.cover-line {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent 0%, rgba(201,169,110,0.2) 30%, rgba(201,169,110,0.2) 70%, transparent 100%);
+  pointer-events: none;
+}
+
+.c-nav {
+  position: relative;
+  z-index: 10;
+  height: 44pt;
+  padding: 0 var(--margin);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  flex-shrink: 0;
+}
+
+.c-nav-logo {
+  font-family: var(--font-body);
+  font-size: 9pt;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.c-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 18pt;
+  font-family: var(--font-body);
+  font-size: 8pt;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.5px;
+}
+
+.c-nav-badge {
+  background: var(--gold);
+  color: #0C0C0E;
+  font-size: 7.5pt;
+  font-weight: 700;
+  padding: 4pt 14pt;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.c-hero {
+  flex: 1;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: stretch;
+}
+
+.c-hero-left {
+  flex: 1.1;
+  padding: 54pt var(--margin) 54pt var(--margin);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.c-hero-eyebrow {
+  font-family: var(--font-body);
+  font-size: 8pt;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 20pt;
+  display: flex;
+  align-items: center;
+  gap: 10pt;
+}
+
+.c-hero-eyebrow::before {
+  content: '';
+  width: 28pt;
+  height: 1px;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+
+.c-hero-name {
+  font-family: var(--font-head);
+  font-size: 58pt;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -1.5px;
+  line-height: 0.92;
+  margin-bottom: 22pt;
+  word-break: break-word;
+}
+
+.c-hero-name em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.c-hero-rule {
+  width: 48pt;
+  height: 2pt;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  margin-bottom: 22pt;
+}
+
+.c-hero-title {
+  font-family: var(--font-body);
+  font-size: 13pt;
+  font-weight: 500;
+  color: rgba(255,255,255,0.75);
+  letter-spacing: 0.3px;
+  margin-bottom: 10pt;
+}
+
+.c-hero-tagline {
+  font-family: var(--font-head);
+  font-size: 14pt;
+  font-style: italic;
+  color: rgba(255,255,255,0.38);
+  line-height: 1.6;
+  max-width: 280pt;
+}
+
+.c-hero-avail {
+  margin-top: 40pt;
+  display: flex;
+  align-items: center;
+  gap: 10pt;
+}
+
+.c-avail-dot {
+  width: 7pt;
+  height: 7pt;
+  border-radius: 50%;
+  background: #4ECDC4;
+  animation: pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+.c-avail-text {
+  font-family: var(--font-body);
+  font-size: 8.5pt;
+  font-weight: 600;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.c-hero-right {
+  flex: 0 0 230pt;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 54pt 36pt 54pt 24pt;
+  position: relative;
+}
+
+.c-photo-ring {
+  width: 180pt;
+  height: 180pt;
+  border-radius: 50%;
+  padding: 3pt;
+  background: linear-gradient(135deg, var(--gold), rgba(201,169,110,0.2));
+  flex-shrink: 0;
+  margin-bottom: 22pt;
+  position: relative;
+}
+
+.c-photo-ring::before {
+  content: '';
+  position: absolute;
+  top: -10pt; left: -10pt; right: -10pt; bottom: -10pt;
+  border-radius: 50%;
+  border: 1px solid rgba(201,169,110,0.15);
+}
+
+.c-photo-ring img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center 15%;
+  display: block;
+}
+
+.c-photo-initials {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-head);
+  font-size: 52pt;
+  font-weight: 700;
+  color: rgba(255,255,255,0.12);
+  letter-spacing: -2px;
+}
+
+.c-photo-meta {
+  text-align: center;
+}
+
+.c-photo-meta-name {
+  font-family: var(--font-body);
+  font-size: 9pt;
+  font-weight: 600;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.5px;
+  margin-bottom: 4pt;
+}
+
+.c-photo-meta-role {
+  font-family: var(--font-body);
+  font-size: 8pt;
+  color: var(--gold);
+  letter-spacing: 0.3px;
+}
+
+.c-bottom {
+  position: relative;
+  z-index: 10;
+  height: 28pt;
+  padding: 0 var(--margin);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  font-family: var(--font-body);
+  font-size: 8pt;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.22);
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════
+   INNER PAGES — BASE
+   FIX: Changed min-height to exact height + overflow:hidden
+   so content is hard-clipped at the A4 boundary.
+   Added min-height:0 to flex children so they respect
+   the clip (without it, flex children ignore overflow:hidden).
+═══════════════════════════════════════════════ */
+.inner {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 29.7cm;        /* exact A4 — hard boundary */
+  overflow: hidden;      /* clip anything that exceeds the page */
+  box-sizing: border-box;
+}
+
+.inner-body {
+  flex: 1;
+  min-height: 0;         /* required: lets flex child respect overflow:hidden */
+  overflow: hidden;      /* second clip layer */
+  padding: 44pt var(--margin) 44pt; /* top + side + bottom padding all here */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* content anchored to top, not stretched */
+  align-items: stretch;
+}
+
+/* Section header block */
+.sec-hdr {
+  margin-bottom: 30pt;
+}
+
+.sec-eyebrow {
+  font-family: var(--font-body);
+  font-size: 8pt;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8pt;
+  display: flex;
+  align-items: center;
+  gap: 9pt;
+}
+
+.sec-eyebrow::before {
+  content: '';
+  width: 20pt;
+  height: 1px;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+
+.sec-h1 {
+  font-family: var(--font-head);
+  font-size: 36pt;
+  font-weight: 700;
+  color: var(--dark);
+  letter-spacing: -0.8px;
+  line-height: 1;
+  margin-bottom: 14pt;
+}
+
+.sec-rule {
+  width: 36pt;
+  height: 2pt;
+  background: var(--dark);
+}
+
+/* Two-column grid */
+.grid-14 {
+  display: flex;
+  gap: 28pt;
+  align-items: flex-start;
+  min-height: 0;         /* FIX: flex child must have this to respect parent overflow */
+}
+
+.col-main { flex: 1.2; min-width: 0; }
+.col-side  { flex: 1;   min-width: 0; }
+
+/* ═══════════════════════════════════════════════
+   PAGE 2 — ABOUT ME
+═══════════════════════════════════════════════ */
+.profile-row {
+  display: flex;
+  align-items: center;
+  gap: 18pt;
+  margin-bottom: 22pt;
+  padding-bottom: 22pt;
+  border-bottom: 1px solid var(--border);
+}
+
+.profile-photo {
+  width: 60pt;
+  height: 60pt;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center 15%;
+  border: 2pt solid var(--border);
+  flex-shrink: 0;
+}
+
+.profile-initials {
+  width: 60pt;
+  height: 60pt;
+  border-radius: 50%;
+  background: var(--dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-family: var(--font-head);
+  font-size: 22pt;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.profile-name {
+  font-family: var(--font-head);
+  font-size: 22pt;
+  font-weight: 700;
+  color: var(--dark);
+  letter-spacing: -0.3px;
+  line-height: 1.1;
+}
+
+.profile-role {
+  font-family: var(--font-body);
+  font-size: 9pt;
+  color: var(--gold);
+  margin-top: 4pt;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.summary-block {
+  border-left: 2.5pt solid var(--dark);
+  padding-left: 16pt;
+  margin-bottom: 0;
+}
+
+/* FIX: Reduced summary font slightly so long bios don't push past page */
+.summary-text {
+  font-family: var(--font-body);
+  font-size: 11.5pt;    /* was 13pt */
+  color: var(--mid);
+  line-height: 1.75;
+}
+
+.rc-block {
+  margin-bottom: 22pt;
+}
+.rc-block:last-child { margin-bottom: 0; }
+
+.rc-label {
+  font-family: var(--font-body);
+  font-size: 9pt;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--dark);
+  margin-bottom: 8pt;
+  padding-bottom: 5pt;
+  border-bottom: 1.5px solid var(--border);
+}
+
+.rc-value {
+  font-family: var(--font-body);
+  font-size: 13pt;
+  color: var(--mid);
+  line-height: 1.8;
+}
+
+.contact-row {
+  display: flex;
+  flex-direction: column;
+  gap: 9pt;
+  margin-top: 4pt;
+}
+
+.contact-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1pt;
+}
+
+.contact-key {
+  font-family: var(--font-body);
+  font-size: 7.5pt;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.contact-val {
+  font-family: var(--font-body);
+  font-size: 12pt;
+  color: var(--gold);
+  word-break: break-all;
+  line-height: 1.4;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(201,169,110,0.35);
+  padding-bottom: 0.5pt;
+}
+
+/* Hyperlinks in contact — clean, no raw URL clutter */
+.contact-val a {
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 12pt;
+  border-bottom: 1px solid rgba(201,169,110,0.35);
+  padding-bottom: 0.5pt;
+  transition: border-color 0.15s;
+}
+.contact-val a:hover {
+  border-color: var(--gold);
+}
+
+.edu-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18pt;
+  margin-top: 12pt;
+}
+
+.edu-item {
+  flex: 0 1 calc(50% - 9pt);
+  padding: 10pt 0 10pt 14pt;
+  border-left: 2.5pt solid var(--gold);
+  min-width: 140pt;
+  page-break-inside: avoid;
+}
+
+.edu-deg  {
+  font-family: var(--font-body);
+  font-size: 12pt;
+  font-weight: 700;
+  color: var(--dark);
+  line-height: 1.1;
+}
+.edu-inst {
+  font-family: var(--font-body);
+  font-size: 9pt;
+  color: var(--muted);
+  margin-top: 3pt;
+  line-height: 1.3;
+}
+.edu-yr {
+  font-family: var(--font-body);
+  font-size: 8pt;
+  color: var(--faint);
+  margin-top: 4pt;
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE 3 — WORK EXPERIENCE
+═══════════════════════════════════════════════ */
+.exp-entry {
+  padding: 20pt 0;      /* was 22pt */
+  border-bottom: 1px solid var(--border);
+}
+
+.exp-entry:first-child { padding-top: 0; }
+.exp-entry:last-child { border-bottom: none; }
+
+.exp-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4pt;
+  gap: 16pt;
+}
+
+.exp-title {
+  font-family: var(--font-head);
+  font-size: 22pt;
+  font-weight: 700;
+  color: var(--dark);
+  letter-spacing: -0.3px;
+  line-height: 1.15;
+  flex: 1;
+  min-width: 0;
+}
+
+.exp-date {
+  font-family: var(--font-body);
+  font-size: 8pt;
+  color: var(--muted);
+  background: var(--surface);
+  padding: 4pt 10pt;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 4pt;
+  letter-spacing: 0.3px;
+}
+
+.exp-company {
+  font-family: var(--font-body);
+  font-size: 12pt;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 10pt;  /* was 12pt */
+}
+
+.exp-bullet {
+  font-family: var(--font-body);
+  font-size: 11.5pt;    /* was 12.5pt */
+  color: var(--mid);
+  line-height: 1.7;
+  padding-left: 18pt;
+  position: relative;
+  margin-bottom: 4pt;   /* was 5pt */
+  max-width: 500pt;
+}
+
+.exp-bullet::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 10pt;
+  width: 8pt; height: 1px;
+  background: var(--gold);
+}
+
+/* ═══════════════════════════════════════════════
+   PROJECTS — strict one-project-per-page
+   FIX: Same as .inner — height:29.7cm + overflow:hidden
+   + min-height:0 on flex children.
+═══════════════════════════════════════════════ */
+.proj-page {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 29.7cm;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.proj-page .inner-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 40pt var(--margin) 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.proj-page .proj-entry {
+  flex: 1;
+  min-height: 0;         /* FIX: same reason */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.proj-page .proj-links {
+  margin-top: auto;
+  padding-top: 14pt;
+  flex-shrink: 0;        /* FIX: never let links get squished */
+}
+
+.proj-page .sec-hdr { margin-bottom: 20pt; }
+.proj-page .sec-h1  { font-size: 32pt; margin-bottom: 10pt; }
+
+.proj-metadata {
+  flex: 1;
+  min-height: 0;         /* FIX: needed for parent overflow clip to work */
+  overflow: hidden;
+  display: flex;
+  gap: 28pt;
+  align-items: flex-start;
+}
+
+.proj-metadata-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.proj-entry { padding-top: 0; }
+
+.proj-entry-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6pt;
+  gap: 16pt;
+  flex-shrink: 0;
+}
+
+.proj-name {
+  font-family: var(--font-head);
+  font-size: 26pt;
+  font-weight: 700;
+  color: var(--dark);
+  letter-spacing: -0.4px;
+  line-height: 1.1;
+  flex: 1;
+  min-width: 0;
+}
+
+.proj-index {
+  font-family: var(--font-body);
+  font-size: 8pt;
+  color: var(--faint);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  align-self: flex-start;
+  margin-top: 5pt;
+  flex-shrink: 0;
+}
+
+.proj-img-inline {
+  width: 100%;
+  height: 130pt;
+  overflow: hidden;
+  margin-bottom: 10pt;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.proj-img-inline img {
+  width: 100%;
+  height: 130pt;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+.proj-desc {
+  font-family: var(--font-body);
+  font-size: 11.5pt;     /* was 12.5pt */
+  color: var(--mid);
+  line-height: 1.7;
+  max-width: 520pt;
+  margin-bottom: 9pt;   /* was 11pt */
+  flex-shrink: 0;
+}
+
+.proj-score {
+  font-family: var(--font-body);
+  font-size: 9pt;
+  color: var(--muted);
+  margin-bottom: 9pt;   /* was 11pt */
+  flex-shrink: 0;
+}
+.proj-score strong { color: var(--dark); font-size: 12.5pt; font-weight: 700; }
+
+.proj-stack-block { margin-bottom: 8pt; }  /* was 10pt */
+.proj-stack-key {
+  font-family: var(--font-body);
+  font-size: 8.5pt;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--dark);
+  margin-bottom: 3pt;
+}
+.proj-stack-val {
+  font-family: var(--font-body);
+  font-size: 11.5pt;     /* was 12pt */
+  color: var(--mid);
+  line-height: 1.6;
+}
+
+.fb { margin-bottom: 8pt; }   /* was 10pt */
+.fb:last-child { margin-bottom: 0; }
+
+.fb-key {
+  font-family: var(--font-body);
+  font-size: 8.5pt;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--dark);
+  margin-bottom: 3pt;
+}
+
+.fb-val {
+  font-family: var(--font-body);
+  font-size: 11.5pt;     /* was 12pt */
+  color: var(--mid);
+  line-height: 1.6;
+  max-width: 500pt;
+}
+
+.proj-links {
+  margin-top: 12pt;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border);
+}
+
+.proj-link-item {
+  display: flex;
+  align-items: baseline;
+  gap: 9pt;
+  padding: 8pt 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.proj-link-key {
+  font-family: var(--font-body);
+  font-weight: 700;
+  color: var(--dark);
+  min-width: 48pt;
+  font-size: 8pt;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.proj-link-val {
+  font-family: var(--font-body);
+  color: var(--muted);
+  word-break: break-all;
+  font-size: 10.5pt;
+}
+
+/* ═══════════════════════════════════════════════
+   CERTIFICATIONS
+═══════════════════════════════════════════════ */
+.cert-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18pt;
+}
+
+.cert-card {
+  flex: 0 0 calc(50% - 9pt);
+  border-left: 3pt solid var(--dark);
+  background: var(--surface);
+  padding: 18pt 20pt 16pt;
+}
+
+.cert-num {
+  font-family: var(--font-body);
+  font-size: 8pt;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--faint);
+  font-weight: 700;
+  margin-bottom: 8pt;
+}
+
+.cert-title {
+  font-family: var(--font-head);
+  font-size: 18pt;
+  font-weight: 700;
+  color: var(--dark);
+  line-height: 1.2;
+  margin-bottom: 6pt;
+}
+
+.cert-org {
+  font-family: var(--font-body);
+  font-size: 12pt;
+  color: var(--mid);
+  font-weight: 600;
+  margin-bottom: 3pt;
+}
+
+.cert-date {
+  font-family: var(--font-body);
+  font-size: 9pt;
+  color: var(--faint);
+  margin-bottom: 6pt;
+}
+
+.cert-url {
+  font-family: var(--font-body);
+  font-size: 8pt;
+  color: var(--faint);
+  word-break: break-all;
+  margin-top: 4pt;
+}
+
+.cert-img {
+  width: 100%;
+  height: 80pt;
+  object-fit: cover;
+  display: block;
+  border: 1px solid var(--border);
+  margin-top: 12pt;
+}
+
+/* ═══════════════════════════════════════════════
+   CLOSING PAGE
+═══════════════════════════════════════════════ */
+.closing {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 29.7cm;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.closing-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 44pt var(--margin) 44pt; /* all padding lives here */
+  overflow: hidden;
+}
+
+.closing::before {
+  content: '—';
+  position: absolute;
+  right: 36pt;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-head);
+  font-size: 200pt;
+  font-weight: 700;
+  color: rgba(0,0,0,0.03);
+  line-height: 1;
+  pointer-events: none;
+  letter-spacing: -8px;
+}
+
+.closing-dark-block {
+  padding: 40pt 44pt;
+  margin: 0 calc(-1 * var(--margin));
+  position: relative;
+}
+
+.closing-dark-block::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 44pt;
+  width: 40pt;
+  height: 3pt;
+  background: var(--gold);
+  opacity: 0.6;
+}
+
+.closing-eyebrow {
+  font-family: var(--font-body);
+  font-size: 8pt;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16pt;
+}
+
+.closing-big {
+  font-family: var(--font-head);
+  font-size: 44pt;
+  font-weight: 700;
+  color: var(--dark);
+  letter-spacing: -1px;
+  line-height: 1.0;
+  max-width: 400pt;
+}
+
+.cl-rule {
+  width: 48pt;
+  height: 2pt;
+  background: var(--dark);
+  margin-top: 22pt;
+}
+
+.cl-table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 460pt;
+  margin-top: 8pt;
+}
+
+.cl-table td {
+  font-family: var(--font-body);
+  font-size: 12.5pt;
+  padding: 10pt 24pt 10pt 0;
+  border-top: 1px solid var(--border);
+  color: var(--mid);
+  vertical-align: top;
+}
+
+.cl-table tr:last-child td { border-bottom: 1px solid var(--border); }
+
+.cl-key {
+  font-family: var(--font-body);
+  font-size: 9pt;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--dark);
+  width: 64pt;
+}
+
+.inner > .page-footer,
+.proj-page > .page-footer {
+  flex-shrink: 0;  /* footer never gets squished — always pinned to bottom of page */
+}
+
+/* ── Screen preview ────────────────────────── */
+@media screen {
+  body { background: #d8d8d8; padding: 32px 0; }
+  .page-wrap { box-shadow: 0 4px 40px rgba(0,0,0,0.2); margin-bottom: 32px; }
+  .inner, .proj-page, .closing { border-top: 1px solid #eeeeee; }
+}
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+<!-- ════════════════════════════════════════
+     PAGE 1 — HERO COVER
+════════════════════════════════════════ -->
+<div class="cover pb">
+
+  <div class="cover-gradient"></div>
+  <div class="cover-dots"></div>
+  <div class="cover-line"></div>
+
+  <div class="c-nav">
+    <div class="c-nav-logo">{{ full_name }}</div>
+    <div class="c-nav-right">
+      {% if open_to_work %}
+      <div class="c-nav-badge">Available for Hire</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="c-hero">
+
+    <div class="c-hero-left">
+      <div class="c-hero-eyebrow">{{ professional_title }}</div>
+
+      <div class="c-hero-name">
+        {%- set name_parts = full_name.split(' ') -%}
+        {%- if name_parts | length > 1 -%}
+          {{ name_parts[:-1] | join(' ') }}<br/><em>{{ name_parts[-1] }}</em>
+        {%- else -%}
+          {{ full_name }}
+        {%- endif -%}
+      </div>
+
+      <div class="c-hero-rule"></div>
+
+      {% if tagline %}
+      <div class="c-hero-tagline">"{{ tagline }}"</div>
+      {% endif %}
+
+      {% if open_to_work %}
+      <div class="c-hero-avail">
+        <div class="c-avail-dot"></div>
+        <div class="c-avail-text">Open to Work</div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="c-hero-right">
+      <div class="c-photo-ring">
+        {% if photo %}
+        <img src="{{ photo }}" alt="{{ full_name }}" />
+        {% else %}
+        <div class="c-photo-initials">
+          {%- set parts = full_name.split(' ') -%}
+          {{- parts[0][0] | upper -}}
+          {%- if parts | length > 1 -%}{{- parts[-1][0] | upper -}}{%- endif -%}
+        </div>
+        {% endif %}
+      </div>
+      <div class="c-photo-meta">
+        <div class="c-photo-meta-name">{{ full_name }}</div>
+        <div class="c-photo-meta-role">{{ professional_title }}</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="c-bottom">
+    <span>{{ full_name | upper }}</span>
+    <span>Page 01</span>
+  </div>
+
+</div><!-- /.cover.pb -->
+
+
+<!-- ════════════════════════════════════════
+     PAGE 2 — ABOUT ME
+════════════════════════════════════════ -->
+<div class="inner pb">
+<div class="inner-body">
+
+  <div class="sec-hdr">
+    <div class="sec-eyebrow">Introduction</div>
+    <div class="sec-h1">About Me</div>
+    <div class="sec-rule"></div>
+  </div>
+
+  <div class="grid-14">
+
+    <div class="col-main">
+      <div class="profile-row">
+        {% if photo %}
+        <img src="{{ photo }}" class="profile-photo" alt="{{ full_name }}" />
+        {% else %}
+        <div class="profile-initials">
+          {%- set parts = full_name.split(' ') -%}
+          {{- parts[0][0] | upper -}}
+          {%- if parts | length > 1 -%}{{- parts[-1][0] | upper -}}{%- endif -%}
+        </div>
+        {% endif %}
+        <div>
+          <div class="profile-name">{{ full_name }}</div>
+          <div class="profile-role">{{ professional_title }}</div>
+        </div>
+      </div>
+
+      {% if summary %}
+      <div class="summary-block">
+        <div class="summary-text">{{ summary }}</div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="col-side">
+
+      <div class="rc-block">
+        <div class="rc-label">Details</div>
+        <div class="contact-row">
+          <div class="contact-item">
+            <span class="contact-key">Email</span>
+            <a href="mailto:{{ email }}" class="contact-val">{{ email }}</a>
+          </div>
+          {% if phone %}
+          <div class="contact-item">
+            <span class="contact-key">Phone</span>
+            <a href="tel:{{ phone }}" class="contact-val">{{ phone }}</a>
+          </div>
+          {% endif %}
+          {% if location %}
+          <div class="contact-item">
+            <span class="contact-key">Location</span>
+            <span class="contact-val">{{ location }}</span>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if technical_skills %}
+      <div class="rc-block">
+        <div class="rc-label">Technical Skills</div>
+        <div class="rc-value">{{ technical_skills | join(', ') }}</div>
+      </div>
+      {% endif %}
+
+      {% if soft_skills %}
+      <div class="rc-block">
+        <div class="rc-label">Strengths</div>
+        <div class="rc-value">{{ soft_skills | join(', ') }}</div>
+      </div>
+      {% endif %}
+
+      {% if spoken_languages %}
+      <div class="rc-block">
+        <div class="rc-label">Languages</div>
+        <div class="rc-value">{{ spoken_languages | join(' · ') }}</div>
+      </div>
+      {% endif %}
+
+      {% if education %}
+      <div class="rc-block">
+        <div class="rc-label">Education</div>
+        <div class="edu-container">
+          {% for edu in education %}
+          <div class="edu-item">
+            <div class="edu-deg">{{ edu.degree }}</div>
+            <div class="edu-inst">{{ edu.institution }}</div>
+            <div class="edu-yr">
+              {{ edu.start_year }} – {{ edu.end_year }}
+              {% if edu.grade %} · {{ edu.grade }}{% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+    </div><!-- /.col-side -->
+  </div><!-- /.grid-14 -->
+
+</div><!-- /.inner-body -->
+
+<div class="page-footer">
+  <span>{{ full_name }}</span>
+  <span>Page 02</span>
+</div>
+</div><!-- /.inner.pb -->
+
+
+<!-- ════════════════════════════════════════
+     PAGE 3 — WORK EXPERIENCE
+════════════════════════════════════════ -->
+{% if work_experience %}
+<div class="inner pb">
+<div class="inner-body">
+
+  <div class="sec-hdr">
+    <div class="sec-eyebrow">Career</div>
+    <div class="sec-h1">Work Experience</div>
+    <div class="sec-rule"></div>
+  </div>
+
+  {%- set we_list = (ai_content.work_experience if ai_content and ai_content.work_experience else work_experience) -%}
+
+  {% for job in we_list %}
+  <div class="exp-entry">
+    <div class="exp-top">
+      <div class="exp-title">{{ job.job_title }}</div>
+      <div class="exp-date">{{ job.start_date }} – {{ job.end_date }}</div>
+    </div>
+    <div class="exp-company">
+      {{ job.company }}{% if job.location %} · {{ job.location }}{% endif %}
+    </div>
+    {%- set desc = job.enhanced_description if job.enhanced_description is defined else job.description -%}
+    {% for line in desc.split('\n') %}{% if line.strip() %}
+    <div class="exp-bullet">{{ line.strip() }}</div>
+    {% endif %}{% endfor %}
+  </div>
+  {% endfor %}
+
+</div><!-- /.inner-body -->
+<div class="page-footer">
+  <span>{{ full_name }}</span>
+  <span>Page 03</span>
+</div>
+</div><!-- /.inner.pb -->
+{% endif %}
+
+
+<!-- ════════════════════════════════════════
+     PROJECTS — one project per page
+════════════════════════════════════════ -->
+{%- set proj_list = (ai_content.projects if ai_content and ai_content.projects else projects) -%}
+
+{% if proj_list %}
+{% for proj in proj_list %}
+
+<div class="proj-page pb">
+
+  <div class="inner-body">
+
+    <div class="sec-hdr">
+      <div class="sec-eyebrow">Portfolio</div>
+      <div class="sec-h1">Projects</div>
+      <div class="sec-rule"></div>
+    </div>
+
+    <div class="proj-entry">
+
+      <div class="proj-entry-top">
+        <div class="proj-name">{{ proj.name }}</div>
+        <div class="proj-index">{{ '%02d' % loop.index }} / {{ '%02d' % (proj_list | length) }}</div>
+      </div>
+
+      {% if proj.images and proj.images | length > 0 %}
+      <div class="proj-img-inline">
+        <img src="{{ proj.images[0] }}" alt="{{ proj.name }}" />
+      </div>
+      {% endif %}
+
+      <div class="proj-desc">
+        {%- if proj.enhanced_description is defined and proj.enhanced_description -%}
+          {{ proj.enhanced_description }}
+        {%- else -%}
+          {{ proj.description }}
+        {%- endif -%}
+      </div>
+
+      {% if proj.accuracy %}
+      <div class="proj-score">
+        <strong>{{ proj.accuracy }}</strong>&nbsp; Accuracy / Score
+      </div>
+      {% endif %}
+
+      <div class="proj-metadata">
+
+        <!-- Left Column -->
+        <div class="proj-metadata-col">
+          {% if proj.tech_stack %}
+          <div class="proj-stack-block">
+            <div class="proj-stack-key">Tech Stack</div>
+            <div class="proj-stack-val">{% for t in proj.tech_stack %}{{ t }}{% if not loop.last %} · {% endif %}{% endfor %}</div>
+          </div>
+          {% endif %}
+
+          {% if proj.problem_statement %}
+          <div class="fb">
+            <div class="fb-key">Problem Statement</div>
+            <div class="fb-val">{{ proj.problem_statement }}</div>
+          </div>
+          {% endif %}
+
+          {% if proj.results %}
+          <div class="fb">
+            <div class="fb-key">Results &amp; Insights</div>
+            <div class="fb-val">{{ proj.results }}</div>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Right Column -->
+        <div class="proj-metadata-col">
+          {% if proj.dataset %}
+          <div class="fb">
+            <div class="fb-key">Dataset</div>
+            <div class="fb-val">{{ proj.dataset }}</div>
+          </div>
+          {% endif %}
+
+          {% if proj.model_approach %}
+          <div class="fb">
+            <div class="fb-key">Model / Approach</div>
+            <div class="fb-val">{{ proj.model_approach }}</div>
+          </div>
+          {% endif %}
+
+          {% if proj.features %}
+          <div class="fb">
+            <div class="fb-key">Key Features</div>
+            <div class="fb-val">{{ proj.features }}</div>
+          </div>
+          {% endif %}
+
+          {% if proj.additional_notes %}
+          <div class="fb">
+            <div class="fb-key">Notes</div>
+            <div class="fb-val">{{ proj.additional_notes }}</div>
+          </div>
+          {% endif %}
+        </div>
+
+      </div><!-- /.proj-metadata -->
+
+      {% if proj.github_url or proj.live_url %}
+      <div class="proj-links">
+        {% if proj.live_url %}
+        <div class="proj-link-item">
+          <span class="proj-link-key">Live</span>
+          <span class="proj-link-val">{{ proj.live_url }}</span>
+        </div>
+        {% endif %}
+        {% if proj.github_url %}
+        <div class="proj-link-item">
+          <span class="proj-link-key">GitHub</span>
+          <span class="proj-link-val">{{ proj.github_url }}</span>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+    </div><!-- /.proj-entry -->
+
+  </div><!-- /.inner-body -->
+
+  <div class="page-footer">
+    <span>{{ full_name }}</span>
+    <span>Page {{ '%02d' % (loop.index + 3) }}</span>
+  </div>
+
+</div><!-- /.proj-page.pb -->
+
+{% endfor %}
+{% endif %}
+
+
+<!-- ════════════════════════════════════════
+     CERTIFICATIONS
+════════════════════════════════════════ -->
+{% if achievements %}
+<div class="inner pb">
+<div class="inner-body">
+
+  <div class="sec-hdr">
+    <div class="sec-eyebrow">Recognition</div>
+    <div class="sec-h1">Certifications</div>
+    <div class="sec-rule"></div>
+  </div>
+
+  <div class="cert-grid">
+    {% for ach in achievements %}
+    <div class="cert-card">
+      <div class="cert-num">{{ '%02d' % loop.index }}</div>
+      <div class="cert-title">{{ ach.title }}</div>
+      <div class="cert-org">{{ ach.organization }}</div>
+      <div class="cert-date">{{ ach.date }}</div>
+      {% if ach.credential_url %}
+      <div class="cert-url">{{ ach.credential_url }}</div>
+      {% endif %}
+      {% if ach.image %}
+      <img src="{{ ach.image }}" class="cert-img" alt="{{ ach.title }}" />
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+</div><!-- /.inner-body -->
+<div class="page-footer">
+  <span>{{ full_name }}</span>
+  {%- set cert_page = (proj_list | length) + 4 if proj_list else 4 -%}
+  <span>Page {{ '%02d' % cert_page }}</span>
+</div>
+</div><!-- /.inner.pb -->
+{% endif %}
+
+
+<!-- ════════════════════════════════════════
+     CLOSING PAGE
+════════════════════════════════════════ -->
+<div class="closing">
+<div class="closing-body">
+
+  <div class="closing-dark-block">
+    <div class="closing-eyebrow">Get In Touch</div>
+    <div class="closing-big">
+      Let's build<br/>something<br/>great together.
+    </div>
+    <div class="cl-rule"></div>
+  </div>
+
+  <div style="padding-top: 32pt;">
+    <table class="cl-table">
+      <tr><td class="cl-key">Email</td><td><a href="mailto:{{ email }}" style="color:var(--mid);text-decoration:none;border-bottom:1px solid var(--border);">{{ email }}</a></td></tr>
+      {% if phone %}<tr><td class="cl-key">Phone</td><td>{{ phone }}</td></tr>{% endif %}
+      {% if github %}<tr><td class="cl-key">GitHub</td><td><a href="{{ github }}" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:600;">View GitHub Profile →</a></td></tr>{% endif %}
+      {% if linkedin %}<tr><td class="cl-key">LinkedIn</td><td><a href="{{ linkedin }}" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:600;">View LinkedIn Profile →</a></td></tr>{% endif %}
+      {% if website %}<tr><td class="cl-key">Website</td><td><a href="{{ website }}" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:600;">Visit Portfolio →</a></td></tr>{% endif %}
+      {% if location %}<tr><td class="cl-key">Location</td><td>{{ location }}</td></tr>{% endif %}
+    </table>
+  </div>
+
+</div><!-- /.closing-body -->
+<div class="page-footer">
+  <span>{{ full_name }}</span>
+  <span>Thank You</span>
+</div>
+</div><!-- /.closing -->
+
+
+</div><!-- /.page-wrap -->
+</body>
+</html>
