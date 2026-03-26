@@ -1,6 +1,5 @@
 FROM python:3.11-slim
 
-# 🔥 FIX FONT + PANGO + CAIRO
 RUN apt-get update && apt-get install -y \
     libpango-1.0-0 \
     libpangoft2-1.0-0 \
@@ -10,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     fonts-dejavu \
     fonts-freefont-ttf \
     fontconfig \
+    && mkdir -p /var/cache/fontconfig \
     && fc-cache -f -v \
     && rm -rf /var/lib/apt/lists/*
 
@@ -20,5 +20,6 @@ COPY . .
 RUN pip install --no-cache-dir -r requirements.txt
 
 ENV PORT=10000
+ENV FONTCONFIG_PATH=/etc/fonts
 
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "10000"]
