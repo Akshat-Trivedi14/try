@@ -12,7 +12,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 
 from groq import Groq
-from pdf_generator import generate_pdf
+from pdf_generator import generate_pdf, shutdown_browser   # ✅ UPDATED
 
 
 # ---------------- LOGGING ----------------
@@ -203,7 +203,7 @@ Projects: {json.dumps(limited_projects)}
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# 🔥 FINAL PDF ENDPOINT (ASYNC FIXED)
+# ---------------- PDF ENDPOINT ----------------
 @app.post("/api/download-pdf")
 async def download_pdf(req: PDFRequest):
     try:
@@ -212,9 +212,6 @@ async def download_pdf(req: PDFRequest):
             req.template_id,
             req.orientation
         )
-
-        if not pdf_bytes or len(pdf_bytes) < 1000:
-            raise Exception("Generated PDF is invalid")
 
         return StreamingResponse(
             iter([pdf_bytes]),
@@ -227,6 +224,12 @@ async def download_pdf(req: PDFRequest):
     except Exception as e:
         logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ---------------- CLEAN SHUTDOWN (CRITICAL) ----------------
+@app.on_event("shutdown")
+def shutdown_event():
+    shutdown_browser()
 
 
 # ---------------- FRONTEND ----------------
