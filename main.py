@@ -94,7 +94,6 @@ class PortfolioRequest(BaseModel):
     technical_skills: List[str]
     projects: List[Project]
 
-    # OPTIONAL (keeps frontend safe)
     photo: Optional[str] = ""
     location: Optional[str] = ""
     github: Optional[str] = ""
@@ -149,7 +148,6 @@ async def generate_portfolio(data: PortfolioRequest):
         if not client:
             raise HTTPException(status_code=500, detail="Groq API not configured")
 
-        # 🔥 SAFE LIMITS (NO STRUCTURE CHANGE)
         limited_projects = [
             {
                 "name": p.name,
@@ -170,9 +168,6 @@ Return ONLY valid JSON:
   "tagline": "short tagline",
   "projects": [
     {{"name":"", "enhanced_description":""}}
-  ],
-  "work_experience": [
-    {{"job_title":"", "company":"", "enhanced_description":""}}
   ]
 }}
 
@@ -203,6 +198,7 @@ Projects: {json.dumps(limited_projects)}
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# 🔥 FINAL PDF ENDPOINT (STRICT + SAFE)
 @app.post("/api/download-pdf")
 async def download_pdf(req: PDFRequest):
     try:
@@ -212,10 +208,16 @@ async def download_pdf(req: PDFRequest):
             req.orientation
         )
 
+        # 🔥 STRICT VALIDATION
+        if not pdf_bytes or len(pdf_bytes) < 1000:
+            raise Exception("Generated PDF is invalid or empty")
+
         return StreamingResponse(
             iter([pdf_bytes]),
             media_type="application/pdf",
-            headers={"Content-Disposition": "attachment; filename=portfolio.pdf"},
+            headers={
+                "Content-Disposition": "attachment; filename=portfolio.pdf"
+            },
         )
 
     except Exception as e:
@@ -223,7 +225,7 @@ async def download_pdf(req: PDFRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# ---------------- FRONTEND (OPTIONAL) ----------------
+# ---------------- FRONTEND ----------------
 FRONTEND_DIST = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
 
 if os.path.exists(FRONTEND_DIST):
