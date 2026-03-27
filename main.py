@@ -6,13 +6,13 @@ import sys
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse, FileResponse, JSONResponse
+from fastapi.responses import Response, FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import Optional, List
 
 from groq import Groq
-from pdf_generator import generate_pdf, shutdown_browser   # ✅ UPDATED
+from pdf_generator import generate_pdf, shutdown_browser
 
 
 # ---------------- LOGGING ----------------
@@ -213,8 +213,8 @@ async def download_pdf(req: PDFRequest):
             req.orientation
         )
 
-        return StreamingResponse(
-            iter([pdf_bytes]),
+        return Response(
+            content=pdf_bytes,
             media_type="application/pdf",
             headers={
                 "Content-Disposition": "attachment; filename=portfolio.pdf"
@@ -222,14 +222,15 @@ async def download_pdf(req: PDFRequest):
         )
 
     except Exception as e:
+        logger.error("PDF GENERATION FAILED")
         logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# ---------------- CLEAN SHUTDOWN (CRITICAL) ----------------
+# ---------------- CLEAN SHUTDOWN ----------------
 @app.on_event("shutdown")
-def shutdown_event():
-    shutdown_browser()
+async def shutdown_event():
+    await shutdown_browser()
 
 
 # ---------------- FRONTEND ----------------
