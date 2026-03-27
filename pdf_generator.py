@@ -1,5 +1,5 @@
 from jinja2 import Environment, FileSystemLoader
-from playwright.sync_api import sync_playwright
+from playwright.async_api import async_playwright
 import os
 import copy
 import logging
@@ -19,15 +19,15 @@ semaphore = asyncio.Semaphore(2)
 
 
 # ---------------- INIT BROWSER ----------------
-def init_browser():
+async def init_browser():
     global playwright, browser
 
     if browser is None:
         logger.info("🚀 Launching shared Chromium instance...")
 
-        playwright = sync_playwright().start()
+        playwright = await async_playwright().start()
 
-        browser = playwright.chromium.launch(
+        browser = await playwright.chromium.launch(
             headless=True,
             args=[
                 "--no-sandbox",
@@ -42,24 +42,23 @@ def init_browser():
         )
 
 
-# ---------------- PDF GENERATION (SYNC CORE) ----------------
-def generate_pdf_sync(html_content: str, orientation: str) -> bytes:
+# ---------------- PDF GENERATION (ASYNC CORE) ----------------
+async def generate_pdf_core(html_content: str, orientation: str) -> bytes:
     global browser
 
-    # 🔁 Retry mechanism (CRITICAL FIX)
     for attempt in range(2):
         try:
-            init_browser()
+            await init_browser()
 
-            page = browser.new_page(
+            page = await browser.new_page(
                 viewport={"width": 1024, "height": 1440}
             )
 
             try:
-                page.set_content(html_content, wait_until="load")
-                page.emulate_media(media="print")
+                await page.set_content(html_content, wait_until="load")
+                await page.emulate_media(media="print")
 
-                pdf_bytes = page.pdf(
+                pdf_bytes = await page.pdf(
                     print_background=True,
                     prefer_css_page_size=True,
                     landscape=(orientation == "landscape"),
@@ -72,15 +71,14 @@ def generate_pdf_sync(html_content: str, orientation: str) -> bytes:
                 return pdf_bytes
 
             finally:
-                page.close()  # 🔥 prevents memory leak
+                await page.close()
 
         except Exception as e:
             logger.warning(f"⚠️ Browser issue, retrying... Attempt {attempt + 1}")
 
-            # 🔥 Force reset browser (SELF-HEAL)
             try:
                 if browser:
-                    browser.close()
+                    await browser.close()
             except:
                 pass
 
@@ -91,9 +89,9 @@ def generate_pdf_sync(html_content: str, orientation: str) -> bytes:
                 raise e
 
 
-# ---------------- ASYNC WRAPPER ----------------
+# ---------------- MAIN ASYNC FUNCTION ----------------
 async def generate_pdf(portfolio_data: dict, template_id: int, orientation: str = "portrait") -> bytes:
-    async with semaphore:  # 🔥 prevents overload crashes
+    async with semaphore:
         try:
             env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
             template = env.get_template(f"template_{template_id}.html")
@@ -107,11 +105,7 @@ async def generate_pdf(portfolio_data: dict, template_id: int, orientation: str 
 
             html_content = template.render(**context)
 
-            pdf_bytes = await asyncio.to_thread(
-                generate_pdf_sync,
-                html_content,
-                orientation
-            )
+            pdf_bytes = await generate_pdf_core(html_content, orientation)
 
             return pdf_bytes
 
@@ -121,15 +115,15 @@ async def generate_pdf(portfolio_data: dict, template_id: int, orientation: str 
 
 
 # ---------------- CLEANUP ----------------
-def shutdown_browser():
+async def shutdown_browser():
     global browser, playwright
 
     logger.info("🛑 Closing browser...")
 
     try:
         if browser:
-            browser.close()
+            await browser.close()
         if playwright:
-            playwright.stop()
+            await playwright.stop()
     except Exception as e:
         logger.error(f"Error during shutdown: {e}")
